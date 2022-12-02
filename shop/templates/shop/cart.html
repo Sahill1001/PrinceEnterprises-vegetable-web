@@ -1,0 +1,146 @@
+{% extends 'shop/basic.html' %}
+{% block title %}Cart{% endblock %}
+{% block css %} {% endblock %}
+{% load static %}
+{% block body %}
+<div class="hero-wrap hero-bread" style="background-image: url({% static 'shop/images/bg_1.jpg' %});">
+	<div class="container">
+		<div class="row no-gutters slider-text align-items-center justify-content-center">
+			<div class="col-md-9 ftco-animate text-center">
+				<p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> <span>Cart</span></p>
+				<h1 class="mb-0 bread">My Cart</h1>
+			</div>
+		</div>
+	</div>
+</div>
+
+<section class="ftco-section ftco-cart">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 ftco-animate">
+				<div class="cart-list">
+					<table class="table">
+						<thead class="thead-primary">
+							<tr class="text-center">
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>Product name</th>
+								<th>Price</th>
+								<th>Quantity</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody id="items">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="row justify-content-end">
+			<div class="col-lg-12 mt-12 cart-wrap ftco-animate">
+				<div class="cart-total mb-3">
+					<h3>Cart Totals</h3>
+					<p class="d-flex">
+						<span>Subtotal</span>
+						<span id="subtot">₹0.0</span>
+					</p>
+					<p class="d-flex">
+						<span>Delivery</span>
+						<span id="delivery">₹0.0</span>
+					</p>
+					<p class="d-flex">
+						<span>Discount</span>
+						<span id="discount">₹0.0</span>
+					</p>
+					<hr>
+					<p class="d-flex total-price">
+						<span>Total</span>
+						<span id="total">₹0.0</span>
+					</p>
+				</div>
+				<div class="d-flex justify-content-around">
+					<p><a href="#" class="btn btn-primary py-3 px-4" id="clear">Clear Cart</a></p>
+					<p><a href="/checkout/" class="btn btn-primary py-3 px-4">Proceed to Checkout</a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+{% block js %}
+<script>
+	updateCart(cart);
+	updateBill(cart);
+	function updateCart(cart){
+		if ($.isEmptyObject(cart)) {
+			//if object is empty
+			mystr = `<tr class="text-center"><td class="product-name"><h3><strong>Your cart is empty, please add some items to your cart before checking out!</strong></h3></tr>`
+			$('#items').append(mystr);
+			alert("Your cart is empty!");
+			document.location = "/shop/";
+		}
+		else {
+			for (item in cart) {
+				let qty = cart[item][0];
+				let name = cart[item][1];
+				let price = cart[item][2];
+				let image = cart[item][3];
+				mystr = `<tr class="text-center tr" id="${item}"><td class="product-remove rem" id="rm${item}"><a><span class="ion-ios-close"></span></a></td>
+			<td class="image-prod"><div class="img" style="background-image:url(${image});"></div></td>
+			<td class="product-name"><h3>${name}</h3>
+			<p>Far far away, behind the word mountains, far from the countries</p></td>
+			<td class="price">₹${price}</td>
+			<td class="quantity"><div class="input-group mb-3">
+			<input type="text" name="quantity" class="quantity form-control input-number"
+			value="x${qty}" min="1" max="100" readonly></div></td>
+			<td class="total">₹${price * qty}</td></tr>`
+				$('#items').append(mystr);
+			}
+		}
+	}
+	
+	function updateBill(cart){
+		let tot = 0;
+		for (item in cart) {
+			let qty = cart[item][0];
+			let price = cart[item][2];
+			tot += price * qty;
+		}
+		document.getElementById("subtot").innerText = "₹" + tot + ".0";
+		if(tot===0){
+			document.getElementById("delivery").innerText = "₹0.0"
+			delivery = 0;
+		}
+		else if (tot < 199) {
+			document.getElementById("delivery").innerText = "₹30.0"
+			var delivery = 30;
+		}
+		else {
+			document.getElementById("delivery").innerText = "₹0.0"
+			delivery = 0;
+		}
+		tot += delivery
+		document.getElementById("total").innerText = "₹" + tot + ".0";
+	}
+
+
+	$(".rem").click(function () {
+		remId = this.id.slice(2,);
+		document.getElementById("items").removeChild(document.getElementById(remId));
+		delete cart[remId];
+		localStorage.setItem('cart', JSON.stringify(cart));
+		document.getElementById('cart').innerHTML = Object.keys(cart).length;
+		updateBill(cart);
+	});
+
+	$("#clear").click(function () {
+		document.getElementById("items").remove();
+		localStorage.clear();
+		cart = {};
+		document.getElementById('cart').innerHTML = Object.keys(cart).length;
+		updateBill(cart);
+		updateCart(cart);	
+	});
+</script>
+{% endblock %}

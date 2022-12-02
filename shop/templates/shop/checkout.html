@@ -1,0 +1,166 @@
+{% extends 'shop/basic.html' %}
+{% block title %}Checkout{% endblock %}
+{% block css %} {% endblock %}
+{% load static %}
+{% block body %}
+<div class="hero-wrap hero-bread" style="background-image: url({% static 'shop/images/bg_1.jpg' %});">
+	<div class="container">
+		<div class="row no-gutters slider-text align-items-center justify-content-center">
+			<div class="col-md-9 ftco-animate text-center">
+				<p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> <span>Checkout</span></p>
+				<h1 class="mb-0 bread">Checkout</h1>
+			</div>
+		</div>
+	</div>
+</div>
+
+<section class="ftco-section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-7 ftco-animate">
+				<form action="/checkout/" method="POST" class="billing-form" id="myForm">{% csrf_token %}
+					<input type="hidden" name="itemsJson" id="itemsJson">
+					<h3 class="mb-4 billing-heading">Billing Details</h3>
+					<div class="row align-items-end">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="name">Firt Name</label>
+								<input type="text" class="form-control" id="name" name="name" placeholder="First Name">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="last_name">Last Name *</label>
+								<input type="text" class="form-control" id="last_name" name="last_name"
+									placeholder="Last Name" required>
+							</div>
+						</div>
+						<div class="w-100"></div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="address1">Street Address *</label>
+								<input type="text" class="form-control" id="address1" name="address1"
+									placeholder="House number and street name" required>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<input type="text" class="form-control" id="address2" name="address2"
+									placeholder="Appartment, suite, unit etc: (optional)">
+							</div>
+						</div>
+						<div class="w-100"></div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="city">Town / City</label>
+								<input type="text" class="form-control" id="city" name="city" placeholder="City">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="postcodezip">Postcode / ZIP *</label>
+								<input type="text" class="form-control" id="zip" name="zip" placeholder="421204"
+									required>
+							</div>
+						</div>
+						<div class="w-100"></div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="phone">Phone *</label>
+								<input type="text" class="form-control" id="phone" name="phone" placeholder="8888888888"
+									required>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="email">Email Address</label>
+								<input type="email" class="form-control" id="email" name="email" placeholder="Email">
+							</div>
+						</div>
+					</div>
+				</form><!-- END -->
+			</div>
+			<div class="col-xl-5">
+				<div class="row mt-5 pt-3">
+					<div class="col-md-12 d-flex mb-5">
+						<div class="cart-detail cart-total p-3 p-md-4">
+							<h3 class="billing-heading mb-4">Cart Total</h3>
+							<p class="d-flex">
+								<span>Subtotal</span>
+								<span id="subtot">₹0.0</span>
+							</p>
+							<p class="d-flex">
+								<span>Delivery</span>
+								<span id="delivery">₹0.0</span>
+							</p>
+							<p class="d-flex">
+								<span>Discount</span>
+								<span id="discount">₹0.0</span>
+							</p>
+							<hr>
+							<p class="d-flex total-price">
+								<span>Total</span>
+								<span id="total">₹0.0</span>
+							</p>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="cart-detail p-3 p-md-4">
+							<h3 class="billing-heading mb-4">Payment Method</h3>
+							<div class="form-group">
+								<div class="col-md-12">
+									<div class="radio">
+										<lsabel><input type="radio" name="payment" class="mr-2" checked="checked"> Cash on
+											Delivery</label>
+									</div>
+								</div>
+							</div>
+							<p><a onclick="myFunction()" type="submit" class="btn btn-primary py-3 px-4">Place an
+									order</a></p>
+						</div>
+					</div>
+				</div>
+			</div> <!-- .col-md-8 -->
+		</div>
+	</div>
+</section> <!-- .section -->
+{% endblock %}
+
+{% block js %}
+<script>
+	if ($.isEmptyObject(cart)) {
+		alert("Your cart is empty!");
+		document.location = "/shop/";
+	}
+	else {
+		var tot = 0;
+		for (item in cart) {
+			let qty = cart[item][0];
+			let price = cart[item][2];
+			tot += price * qty;
+		}
+		document.getElementById("subtot").innerText = "₹" + tot + ".0";
+		if (tot < 199) {
+			document.getElementById("delivery").innerText = "₹30.0"
+			var delivery = 30;
+		}
+		else {
+			document.getElementById("delivery").innerText = "₹0.0"
+			delivery = 0;
+		}
+		tot += delivery
+		document.getElementById("total").innerText = "₹" + tot + ".0";
+
+		function myFunction() {
+			document.getElementById("myForm").submit();
+		}
+
+		$('#itemsJson').val(JSON.stringify(cart));
+		{% if thank %}
+		alert("Thanks for ordering with us. Your order id is {{id}}.")
+		localStorage.clear();
+		document.location = "/";
+		{% endif %}
+	}
+</script>
+{% endblock %}
