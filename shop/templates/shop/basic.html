@@ -91,8 +91,8 @@
 
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item {% block homeactive %}{% endblock homeactive %}"><a href="/" class="nav-link">Home</a></li>
+                    <li class="nav-item dropdown {% block shopactive %}{% endblock shopactive %}">
                         <a class="nav-link dropdown-toggle" href="/shop/" id="dropdown04" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Shop</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown04">
@@ -103,10 +103,10 @@
                             <a class="dropdown-item disabled" href="/wishlist/">Wishlist</a>
                         </div>
                     </li>
-                    <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
+                    <li class="nav-item {% block aboutactive %}{% endblock aboutactive %}"><a href="/about/" class="nav-link">About</a></li>
                     <!-- <li class="nav-item"><a href="#" class="nav-link">Blog</a></li> -->
-                    <li class="nav-item"><a href="/contact/" class="nav-link">Contact</a></li>
-                    <li class="nav-item cta cta-colored"><a href="/cart/" class="nav-link">
+                    <li class="nav-item {% block contactactive %}{% endblock contactactive %}"><a href="/contact/" class="nav-link">Contact</a></li>
+                    <li class="nav-item cta cta-colored {% block cartactive %}{% endblock cartactive %}"><a href="/cart/" class="nav-link">
                             <span class="icon-shopping_cart"></span>[<span id="cart">0</span>]</a></li>
                 </ul>
                 <form action="/search/" method="get" class="row d-flex" style="margin-left: 20px;">
